@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
+import java.lang.Thread.sleep
 
 /**
  * User: hyecheon lee
@@ -36,4 +37,11 @@ class ActorSystemTest {
         actorSystem.tell("who are you")
         actorSystem.tell("This is the second message.")
     }
+
+    @DisplayName("3. 자식 생성")
+    @Test
+    internal fun test_3() {
+        actorSystem.tell("create a child")
+    }
+
 }
