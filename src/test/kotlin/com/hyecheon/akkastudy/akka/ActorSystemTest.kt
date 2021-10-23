@@ -1,12 +1,16 @@
 package com.hyecheon.akkastudy.akka
 
 import akka.actor.typed.ActorSystem
+import com.hyecheon.akkastudy.behavior.ManagerBehavior
 import com.hyecheon.akkastudy.config.AkkaConfig
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
+import java.lang.Thread.sleep
 
 /**
  * User: hyecheon lee
@@ -18,8 +22,12 @@ import org.springframework.context.annotation.Import
 class ActorSystemTest {
 
     @Autowired
+    @Qualifier("firstActorSystem")
     lateinit var actorSystem: ActorSystem<String>
 
+    @Autowired
+    @Qualifier("workerActorSystem")
+    lateinit var workActorSystem: ActorSystem<String>
 
     @DisplayName("1. tell")
     @Test
@@ -28,4 +36,33 @@ class ActorSystemTest {
         actorSystem.tell("This is the second message.")
     }
 
+
+    @DisplayName("2. 메시지 분리 테스트")
+    @Test
+    internal fun test_2() {
+        actorSystem.tell("say hello")
+        actorSystem.tell("who are you")
+        actorSystem.tell("This is the second message.")
+    }
+
+    @DisplayName("3. 자식 생성")
+    @Test
+    internal fun test_3() {
+        actorSystem.tell("create a child")
+    }
+
+
+    @DisplayName("4. worker ActorSystem")
+    @Test
+    internal fun test_4() {
+        workActorSystem.tell("start")
+        sleep(1000)
+    }
+
+    @DisplayName("5. manager ActorSystem")
+    @Test
+    internal fun test_5() = runBlocking {
+        val bigPrimes = ActorSystem.create(ManagerBehavior.create(), "BigPrime")
+        bigPrimes.tell("start")
+    }
 }
