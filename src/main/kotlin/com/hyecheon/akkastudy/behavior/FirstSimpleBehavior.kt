@@ -21,6 +21,14 @@ class FirstSimpleBehavior(context: ActorContext<String>) : AbstractBehavior<Stri
 
     override fun createReceive(): Receive<String> {
         return newReceiveBuilder()
+            .onMessageEquals("say hello") {
+                log.info("hello")
+                this
+            }
+            .onMessageEquals("who are you") {
+                log.info("My path is ${context.self.path()}")
+                this
+            }
             .onAnyMessage { message ->
                 log.info("I received the message : $message")
                 this

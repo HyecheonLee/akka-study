@@ -28,4 +28,12 @@ class ActorSystemTest {
         actorSystem.tell("This is the second message.")
     }
 
+
+    @DisplayName("2. 메시지 분리 테스트")
+    @Test
+    internal fun test_2() {
+        actorSystem.tell("say hello")
+        actorSystem.tell("who are you")
+        actorSystem.tell("This is the second message.")
+    }
 }
