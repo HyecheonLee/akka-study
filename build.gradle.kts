@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.hyecheon"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
@@ -22,6 +22,11 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+
+    //akka
+    implementation(platform("com.typesafe.akka:akka-bom_2.13:2.6.17"))
+    implementation("com.typesafe.akka:akka-actor-typed_2.13")
+    testImplementation("com.typesafe.akka:akka-actor-testkit-typed_2.13")
 }
 
 tasks.withType<KotlinCompile> {
