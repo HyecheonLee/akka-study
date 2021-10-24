@@ -6,6 +6,7 @@ import akka.actor.typed.javadsl.ActorContext
 import akka.actor.typed.javadsl.Behaviors
 import com.hyecheon.akkastudy.behavior.ManagerBehavior.*
 import com.hyecheon.akkastudy.behavior.ManagerBehavior.Command.Result
+import org.slf4j.LoggerFactory
 import java.io.Serializable
 import java.math.BigInteger
 import java.util.*
@@ -16,6 +17,8 @@ import java.util.*
  * Date: 2021/10/24
  */
 class WorkerBehavior(context: ActorContext<Command>) : AbstractBehavior<WorkerBehavior.Command>(context) {
+    private val log = LoggerFactory.getLogger(this::class.java)
+
     companion object {
         fun create() = Behaviors.setup(::WorkerBehavior)
     }
@@ -24,14 +27,21 @@ class WorkerBehavior(context: ActorContext<Command>) : AbstractBehavior<WorkerBe
         data class Start(val sender: ActorRef<ManagerBehavior.Command>? = null) : Command()
     }
 
+    private var prime: BigInteger? = null
+
 
     override fun createReceive() = run {
         newReceiveBuilder()
             .onAnyMessage { receiveMsg ->
                 when (receiveMsg) {
                     is Command.Start -> {
-                        val bigInteger = BigInteger(2000, Random())
-                        receiveMsg.sender?.tell(Result(bigInteger))
+                        if (prime == null) {
+                            val bigInteger = BigInteger(2000, Random())
+                            prime = bigInteger.nextProbablePrime()
+                        }
+                        prime?.let {
+                            receiveMsg.sender?.tell(Result(it))
+                        }
                     }
                 }
                 this

@@ -4,7 +4,6 @@ import akka.actor.typed.ActorSystem
 import com.hyecheon.akkastudy.behavior.ManagerBehavior
 import com.hyecheon.akkastudy.behavior.WorkerBehavior
 import com.hyecheon.akkastudy.config.AkkaConfig
-import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -62,9 +61,9 @@ class ActorSystemTest {
 
     @DisplayName("5. manager ActorSystem")
     @Test
-    internal fun test_5() = runBlocking {
+    internal fun test_5() {
         val bigPrimes = ActorSystem.create(ManagerBehavior.create(), "BigPrime")
         bigPrimes.tell(ManagerBehavior.Command.Start)
-        sleep(20000)
+        sleep(2000)
     }
 }
