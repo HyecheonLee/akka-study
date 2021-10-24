@@ -1,10 +1,12 @@
 package com.hyecheon.akkastudy.behavior
 
-import akka.actor.typed.Behavior
+import akka.actor.typed.ActorRef
 import akka.actor.typed.javadsl.AbstractBehavior
 import akka.actor.typed.javadsl.ActorContext
 import akka.actor.typed.javadsl.Behaviors
-import akka.actor.typed.javadsl.Receive
+import com.hyecheon.akkastudy.behavior.ManagerBehavior.*
+import com.hyecheon.akkastudy.behavior.ManagerBehavior.Command.Result
+import java.io.Serializable
 import java.math.BigInteger
 import java.util.*
 
@@ -13,18 +15,23 @@ import java.util.*
  * Email: rainbow880616@gmail.com
  * Date: 2021/10/24
  */
-class WorkerBehavior(context: ActorContext<String>) : AbstractBehavior<String>(context) {
+class WorkerBehavior(context: ActorContext<Command>) : AbstractBehavior<WorkerBehavior.Command>(context) {
     companion object {
         fun create() = Behaviors.setup(::WorkerBehavior)
     }
 
-    override fun createReceive(): Receive<String> {
-        return newReceiveBuilder()
-            .onAnyMessage { message ->
-                when (message) {
-                    "start" -> {
+    sealed class Command : Serializable {
+        data class Start(val sender: ActorRef<ManagerBehavior.Command>? = null) : Command()
+    }
+
+
+    override fun createReceive() = run {
+        newReceiveBuilder()
+            .onAnyMessage { receiveMsg ->
+                when (receiveMsg) {
+                    is Command.Start -> {
                         val bigInteger = BigInteger(2000, Random())
-                        println(bigInteger.nextProbablePrime())
+                        receiveMsg.sender?.tell(Result(bigInteger))
                     }
                 }
                 this

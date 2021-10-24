@@ -2,6 +2,7 @@ package com.hyecheon.akkastudy.akka
 
 import akka.actor.typed.ActorSystem
 import com.hyecheon.akkastudy.behavior.ManagerBehavior
+import com.hyecheon.akkastudy.behavior.WorkerBehavior
 import com.hyecheon.akkastudy.config.AkkaConfig
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.DisplayName
@@ -27,7 +28,7 @@ class ActorSystemTest {
 
     @Autowired
     @Qualifier("workerActorSystem")
-    lateinit var workActorSystem: ActorSystem<String>
+    lateinit var workActorSystem: ActorSystem<WorkerBehavior.Command>
 
     @DisplayName("1. tell")
     @Test
@@ -55,7 +56,7 @@ class ActorSystemTest {
     @DisplayName("4. worker ActorSystem")
     @Test
     internal fun test_4() {
-        workActorSystem.tell("start")
+        workActorSystem.tell(WorkerBehavior.Command.Start())
         sleep(1000)
     }
 
@@ -63,6 +64,7 @@ class ActorSystemTest {
     @Test
     internal fun test_5() = runBlocking {
         val bigPrimes = ActorSystem.create(ManagerBehavior.create(), "BigPrime")
-        bigPrimes.tell("start")
+        bigPrimes.tell(ManagerBehavior.Command.Start)
+        sleep(20000)
     }
 }
